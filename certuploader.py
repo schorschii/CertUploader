@@ -1,16 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from locale import getdefaultlocale
-
-from cryptography import x509
-from cryptography.hazmat.primitives.serialization import pkcs12
-from cryptography.hazmat.primitives.serialization import Encoding
-from cryptography.hazmat.backends import default_backend
-
 from urllib.parse import unquote
 from pathlib import Path
 from os import path, makedirs, rename
@@ -21,6 +11,20 @@ import ldap3
 import json
 import sys
 import os
+
+from cryptography import x509
+from cryptography.hazmat.primitives.serialization import pkcs12
+from cryptography.hazmat.primitives.serialization import Encoding
+from cryptography.hazmat.backends import default_backend
+
+# gtk2 theme is more convenient when it comes to
+# selecting files from network shares using QFileDialog (on linux)
+if os.environ.get('QT_QPA_PLATFORMTHEME') == 'qt5ct':
+	os.environ['QT_QPA_PLATFORMTHEME'] = 'gtk2'
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from locale import getdefaultlocale
 
 
 class LapsAboutWindow(QDialog):
