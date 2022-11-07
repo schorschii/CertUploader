@@ -133,7 +133,7 @@ class CertUploaderMainWindow(QMainWindow):
 	PLATFORM          = sys.platform.lower()
 
 	PRODUCT_NAME      = 'CertUploader'
-	PRODUCT_VERSION   = '1.0.0'
+	PRODUCT_VERSION   = '1.1.0'
 	PRODUCT_WEBSITE   = 'https://github.com/schorschii/certuploader'
 	PRODUCT_ICON      = 'certuploader.png'
 	PRODUCT_ICON_PATH = '/usr/share/pixmaps'
