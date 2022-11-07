@@ -478,6 +478,7 @@ class CertUploaderMainWindow(QMainWindow):
 					auto_referrals=True,
 					auto_bind=True
 				)
+				self.cfgQueryUsername = getpass.getuser()
 				#self.connection.bind()
 				return True # return if connection created successfully
 		except Exception as e:
