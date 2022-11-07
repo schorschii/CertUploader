@@ -66,7 +66,7 @@ class CertUploaderAboutWindow(QDialog):
 		labelDescription.setText(
 			QApplication.translate('CertUploader', 'The CertUploader enables you to upload/publish your personal (email) certificate into your companies LDAP directory (e.g. Active Directory). Other employees need the public key from your certificate in order to send encrypted emails to you (using Outlook, Evolution or other SMIME compatible mail clients).')
 		)
-		labelDescription.setStyleSheet("opacity:0.8")
+		labelDescription.setStyleSheet('opacity:0.8')
 		labelDescription.setFixedWidth(450)
 		labelDescription.setWordWrap(True)
 		self.layout.addWidget(labelDescription)
@@ -458,7 +458,7 @@ class CertUploaderMainWindow(QMainWindow):
 		if len(self.cfgServer) == 0:
 			# query domain controllers by dns lookup
 			try:
-				res = resolver.query(qname='_ldap._tcp', rdtype=rdatatype.SRV, lifetime=10)
+				res = resolver.query(qname=f'_ldap._tcp.{self.cfgDomain}', rdtype=rdatatype.SRV, lifetime=10)
 				for srv in res.rrset:
 					serverEntry = {
 						'address': str(srv.target).rstrip('.'),
