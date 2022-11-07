@@ -349,8 +349,9 @@ class CertUploaderMainWindow(QMainWindow):
 		# start LDAP modify
 		self.connection.modify(self.tmpDn, { self.cfgLdapAttributeCertificates: [(ldap3.MODIFY_ADD, [certContent])] })
 		if self.connection.result['result'] == 0:
-			self.showInfoDialog('Success',
-				QApplication.translate('CertUploader', 'Certificate successfully uploaded'),
+			self.showInfoDialog(QApplication.translate('CertUploader', 'Success'),
+				QApplication.translate('CertUploader', 'Certificate was uploaded successfully.')
+				+'\n\n'+QApplication.translate('CertUploader', 'Note: if you are using a server pool, it can take some seconds until the changes are replicated on all servers.'),
 				self.tmpDn+' ('+str(self.connection.server)+')'
 			)
 			self.OnClickQuery(None)
@@ -382,8 +383,8 @@ class CertUploaderMainWindow(QMainWindow):
 			with open(fileName, 'wb') as f:
 				f.write(binaryCerts[0])
 				f.close()
-			self.showInfoDialog('Success',
-				QApplication.translate('CertUploader', 'Certificate successfully saved'),
+			self.showInfoDialog(QApplication.translate('CertUploader', 'Success'),
+				QApplication.translate('CertUploader', 'Certificate was saved successfully.'),
 				self.tmpDn+' ('+str(self.connection.server)+')'
 			)
 		except Exception as e:
@@ -415,8 +416,9 @@ class CertUploaderMainWindow(QMainWindow):
 		# start LDAP modify
 		self.connection.modify(self.tmpDn, { self.cfgLdapAttributeCertificates: [(ldap3.MODIFY_DELETE, binaryCerts)] })
 		if self.connection.result['result'] == 0:
-			self.showInfoDialog('Success',
-				QApplication.translate('CertUploader', 'Certificate(s) successfully deleted'),
+			self.showInfoDialog(QApplication.translate('CertUploader', 'Success'),
+				QApplication.translate('CertUploader', 'Certificate(s) were deleted successfully.')
+				+'\n\n'+QApplication.translate('CertUploader', 'Note: if you are using a server pool, it can take some seconds until the changes are replicated on all servers.'),
 				self.tmpDn+' ('+str(self.connection.server)+')'
 			)
 			self.OnClickQuery(None)
