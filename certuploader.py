@@ -478,7 +478,8 @@ class CertUploaderMainWindow(QMainWindow):
 					auto_referrals=True,
 					auto_bind=True
 				)
-				self.cfgQueryUsername = getpass.getuser()
+				if(self.cfgQueryUsername == ''):
+					self.cfgQueryUsername = getpass.getuser()
 				#self.connection.bind()
 				return True # return if connection created successfully
 		except Exception as e:
@@ -492,7 +493,8 @@ class CertUploaderMainWindow(QMainWindow):
 			item, ok = QInputDialog.getText(self, '👤 '+QApplication.translate('CertUploader', 'Username'), QApplication.translate('CertUploader', 'Please enter the username which should be used to connect to:')+'\n'+str(self.cfgServer), QLineEdit.Normal, getpass.getuser())
 			if ok and item:
 				self.cfgUsername = item
-				self.cfgQueryUsername = item
+				if(self.cfgQueryUsername == ''):
+					self.cfgQueryUsername = item
 				self.connection = None
 			else: return False
 		if self.cfgPassword == '':
