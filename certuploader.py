@@ -208,9 +208,10 @@ class CertUploaderMainWindow(QMainWindow):
 
 		self.lblMyCertificates = QLabel(QApplication.translate('CertUploader', 'Certificates, published in global address list (GAL)'))
 		grid.addWidget(self.lblMyCertificates, gridLine, 0)
+
 		gridLine += 1
 		self.lstMyCertificates = CertTableView()
-		grid.addWidget(self.lstMyCertificates, gridLine, 0, 2, 1)
+		grid.addWidget(self.lstMyCertificates, gridLine, 0)
 
 		buttonBox = QVBoxLayout()
 		self.btnQuery = QPushButton(QApplication.translate('CertUploader', 'Query'))
@@ -228,6 +229,7 @@ class CertUploaderMainWindow(QMainWindow):
 		self.btnDelete.setEnabled(False)
 		self.btnDelete.clicked.connect(self.OnClickDelete)
 		buttonBox.addWidget(self.btnDelete)
+		buttonBox.addStretch(1)
 		grid.addLayout(buttonBox, gridLine, 1)
 
 		widget = QWidget(self)
