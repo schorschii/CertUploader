@@ -27,9 +27,9 @@ from PyQt5.QtCore import *
 from locale import getdefaultlocale
 
 
-class LapsAboutWindow(QDialog):
+class CertUploaderAboutWindow(QDialog):
 	def __init__(self, *args, **kwargs):
-		super(LapsAboutWindow, self).__init__(*args, **kwargs)
+		super(CertUploaderAboutWindow, self).__init__(*args, **kwargs)
 		self.InitUI()
 
 	def InitUI(self):
@@ -249,7 +249,7 @@ class CertUploaderMainWindow(QMainWindow):
 		sys.exit()
 
 	def OnOpenAboutDialog(self, e):
-		dlg = LapsAboutWindow(self)
+		dlg = CertUploaderAboutWindow(self)
 		dlg.exec_()
 
 	def OnReturnSearch(self):
