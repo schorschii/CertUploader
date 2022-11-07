@@ -135,6 +135,8 @@ class CertUploaderMainWindow(QMainWindow):
 	PRODUCT_NAME      = 'CertUploader'
 	PRODUCT_VERSION   = '1.0.0'
 	PRODUCT_WEBSITE   = 'https://github.com/schorschii/certuploader'
+	PRODUCT_ICON      = 'certuploader.png'
+	PRODUCT_ICON_PATH = '/usr/share/pixmaps'
 
 	useKerberos = True
 	server      = None
@@ -163,6 +165,15 @@ class CertUploaderMainWindow(QMainWindow):
 		self.InitUI()
 
 	def InitUI(self):
+		# Icon Selection
+		if(getattr(sys, 'frozen', False)):
+			# included via pyinstaller (Windows & macOS)
+			self.PRODUCT_ICON_PATH = sys._MEIPASS
+		self.iconPath = path.join(self.PRODUCT_ICON_PATH, self.PRODUCT_ICON)
+		if(path.exists(self.iconPath)):
+			self.icon = QIcon(self.iconPath)
+			self.setWindowIcon(self.icon)
+
 		# Menubar
 		mainMenu = self.menuBar()
 
