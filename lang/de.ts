@@ -136,7 +136,7 @@
     <message>
         <location filename="../certuploader.py" line="378"/>
         <source>Please select exactly 1 certificate from the list.</source>
-        <translation>Bitte wählen Sie genau 1 Zertifikate in der Liste aus.</translation>
+        <translation>Bitte wählen Sie genau 1 Zertifikat in der Liste aus.</translation>
     </message>
     <message>
         <location filename="../certuploader.py" line="385"/>
