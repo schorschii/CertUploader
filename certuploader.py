@@ -271,9 +271,16 @@ class CertUploaderMainWindow(QMainWindow):
 		fileName, _ = QFileDialog.getOpenFileName(self, title, None, filter)
 		return fileName
 
-	def SaveFileDialog(self, title, default, filter):
-		fileName, _ = QFileDialog.getSaveFileName(self, title, default, filter)
-		return fileName
+	def SaveFileDialog(self, title, default, filter, suffix):
+		dialog = QFileDialog(self, title)
+		dialog.setNameFilters(filter.split(';;'))
+		dialog.setDefaultSuffix(suffix)
+		dialog.selectFile(default)
+		dialog.setAcceptMode(QFileDialog.AcceptSave)
+		if dialog.exec_() == QDialog.Accepted and len(dialog.selectedFiles()) == 1:
+			return dialog.selectedFiles()[0]
+		else:
+			return ''
 
 	def OnClickQueryOtherUser(self, e):
 		# ask for credentials
@@ -389,7 +396,7 @@ class CertUploaderMainWindow(QMainWindow):
 
 		# save file
 		try:
-			fileName = self.SaveFileDialog(QApplication.translate('CertUploader', 'Save Certificate Into File'), None, 'Certificate Files (*.cer);;All Files (*.*)')
+			fileName = self.SaveFileDialog(QApplication.translate('CertUploader', 'Save Certificate Into File'), None, 'Certificate Files (*.cer);;All Files (*.*)', 'cer')
 			if not fileName: return
 			with open(fileName, 'wb') as f:
 				f.write(binaryCerts[0])

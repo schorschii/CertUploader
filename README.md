@@ -4,7 +4,9 @@ The CertUploader enables you to upload/publish your personal (email) certificate
 ![Screenshot](.github/screenshot.png)
 
 ## Why?
-This feature is basically provided by Outlook (Button "Publish in GAL" in the Trust Center). Unfortunately, this button is not visible anymore as soon as you add multiple email certificates into outlook. Great job Microsoft! That's why and to provide this functionality for Linux clients, I developed this tiny python GUI.
+This feature is basically provided by Outlook (Button "Publish in GAL" in the Trust Center). Unfortunately, this button is not visible anymore as soon as you add multiple email certificates into outlook. Great job, Microsoft! That's why and to provide this functionality for Linux clients, I developed this tiny python GUI.
+
+Bonus: in contrast to the Active Directory user edit dialog (which enabled administrators to view the user certiciates), the window of this application can be resized. Yay!
 
 ### Kerberos Authentication
 The application supports Kerberos authentication which means that you can use the client without entering a password if you are logged in with a domain account and have a valid Kerberos ticket. If not, ldap3's "simple" authentication is used as fallback and the client will ask you for username and password.

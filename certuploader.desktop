@@ -4,6 +4,6 @@ Exec=/usr/bin/certuploader
 Type=Application
 Comment=Upload certificates into LDAP directory / global address list (GAL)
 Comment[de_DE]=Zertifikate in das LDAP-Verzeichnis bzw. globale Adressbuch (GAL) hochladen
-Icon=application-pgp-signature
+Icon=/usr/share/pixmaps/certuploader.png
 Categories=Application;Office
 Terminal=false
