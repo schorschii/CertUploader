@@ -458,10 +458,10 @@ class CertUploaderMainWindow(QMainWindow):
 		if len(self.cfgServer) == 0:
 			# query domain controllers by dns lookup
 			try:
-				res = resolver.query(qname=f"_ldap._tcp.{self.cfgDomain}", rdtype=rdatatype.SRV, lifetime=10)
+				res = resolver.query(qname='_ldap._tcp', rdtype=rdatatype.SRV, lifetime=10)
 				for srv in res.rrset:
 					serverEntry = {
-						'address': str(srv.target),
+						'address': str(srv.target).rstrip('.'),
 						'port': srv.port,
 						'ssl': (srv.port == 636)
 					}
