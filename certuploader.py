@@ -80,6 +80,7 @@ class CertTableView(QTableWidget):
 	def __init__(self, *args):
 		QTableWidget.__init__(self, *args)
 		self.setSelectionBehavior(QAbstractItemView.SelectRows)
+		self.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
  
 	def setData(self, certs):
 		self.tmpCerts = certs
@@ -101,14 +102,14 @@ class CertTableView(QTableWidget):
 				certUsage = ''
 				certExpiry = ''
 
-			newitem = QTableWidgetItem(certIssuedFor)
-			self.setItem(counter, 0, newitem)
-			newitem = QTableWidgetItem(certIssuer)
-			self.setItem(counter, 1, newitem)
-			newitem = QTableWidgetItem(certUsage)
-			self.setItem(counter, 2, newitem)
-			newitem = QTableWidgetItem(certExpiry)
-			self.setItem(counter, 3, newitem)
+			newItem = QTableWidgetItem(certIssuedFor)
+			self.setItem(counter, 0, newItem)
+			newItem = QTableWidgetItem(certIssuer)
+			self.setItem(counter, 1, newItem)
+			newItem = QTableWidgetItem(certUsage)
+			self.setItem(counter, 2, newItem)
+			newItem = QTableWidgetItem(certExpiry)
+			self.setItem(counter, 3, newItem)
 			counter += 1
 
 		self.setHorizontalHeaderLabels([
