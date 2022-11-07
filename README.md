@@ -32,7 +32,7 @@ lrelease lang/de.ts
 
 ### Compiling (on Windows and macOS)
 ```
-pyinstaller -F --noconsole certuploader.py --add-data="lang/de.qm;lang"
+pyinstaller certuploader.windows.spec
 ```
 
 ## Support
