@@ -490,7 +490,7 @@ class CertUploaderMainWindow(QMainWindow):
 						port = server['gc-port']
 						self.gcModeOn = True
 					serverArray.append(ldap3.Server(server['address'], port=port, use_ssl=server['ssl'], get_info=ldap3.ALL, connect_timeout=5))
-				self.server = ldap3.ServerPool(serverArray, ldap3.ROUND_ROBIN, active=1, exhaust=True)
+				self.server = ldap3.ServerPool(serverArray, ldap3.FIRST, active=1, exhaust=True)
 			except Exception as e:
 				self.showErrorDialog(QApplication.translate('CertUploader', 'Error connecting to LDAP server'), str(e))
 				return False
