@@ -256,7 +256,7 @@
     <message>
         <location filename="../certuploader.py" line="436"/>
         <source>Note: if you deleted your certificate due to compromise you should also revoke your certificate. Please contact your local IT support for more information.</source>
-        <translation>Hinweis: Wenn Sie Ihr Zertifikat aufgrund einer Kompromittierung gelöscht haben, sollten Sie auch Ihr Zertifikat widerrufen (revoke). Bitte kontaktieren Sie Ihren lokalen IT-Support für weitere Informationen.</translation>
+        <translation>Hinweis: Wenn Sie Ihr Zertifikat aufgrund einer Kompromittierung gelöscht haben, sollten Sie Ihr Zertifikat auch widerrufen (revoke). Bitte kontaktieren Sie Ihren lokalen IT-Support für weitere Informationen.</translation>
     </message>
 </context>
 </TS>
