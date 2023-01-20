@@ -368,8 +368,7 @@ class CertUploaderMainWindow(QMainWindow):
 		self.connection.modify(self.tmpDn, { self.cfgLdapAttributeCertificates: [(ldap3.MODIFY_ADD, [certContent])] })
 		if self.connection.result['result'] == 0:
 			self.showInfoDialog(QApplication.translate('CertUploader', 'Success'),
-				QApplication.translate('CertUploader', 'Certificate was uploaded successfully.')
-				+'\n\n'+QApplication.translate('CertUploader', 'Note: if you are using a server pool, it can take some seconds until the changes are replicated on all servers.'),
+				QApplication.translate('CertUploader', 'Certificate was uploaded successfully.'),
 				self.tmpDn+' ('+str(self.connection.server)+')'
 			)
 			self.OnClickQuery(None)
@@ -436,7 +435,7 @@ class CertUploaderMainWindow(QMainWindow):
 		if self.connection.result['result'] == 0:
 			self.showInfoDialog(QApplication.translate('CertUploader', 'Success'),
 				QApplication.translate('CertUploader', 'Certificate(s) were deleted successfully.')
-				+'\n\n'+QApplication.translate('CertUploader', 'Note: if you are using a server pool, it can take some seconds until the changes are replicated on all servers.'),
+				+'\n\n'+QApplication.translate('CertUploader', 'Note: if you deleted your certificate due to compromise you should also revoke your certificate. Please contact your local IT support for more information.'),
 				self.tmpDn+' ('+str(self.connection.server)+')'
 			)
 			self.OnClickQuery(None)

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="de_DE" sourcelanguage="">
+<!DOCTYPE TS>
+<TS version="2.1" language="de_DE">
 <context>
     <name>CertUploader</name>
     <message>
-        <location filename="../certuploader.py" line="172"/>
+        <location filename="../certuploader.py" line="183"/>
         <source>&amp;Query Certificates</source>
         <translation>Zertifikate &amp;abfragen</translation>
     </message>
@@ -33,157 +34,157 @@
         <translation>Ablauf</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="176"/>
+        <location filename="../certuploader.py" line="187"/>
         <source>Query &amp;Other User Certificates</source>
         <translation>Anderer Benutzer &amp;Zertifikate abfragen</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="181"/>
+        <location filename="../certuploader.py" line="192"/>
         <source>&amp;Upload</source>
         <translation>&amp;Hochladen</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="185"/>
+        <location filename="../certuploader.py" line="196"/>
         <source>&amp;Save</source>
         <translation>&amp;Speichern</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="189"/>
+        <location filename="../certuploader.py" line="200"/>
         <source>&amp;Delete</source>
         <translation>&amp;Löschen</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="194"/>
+        <location filename="../certuploader.py" line="205"/>
         <source>&amp;Quit</source>
         <translation>&amp;Beenden</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="214"/>
+        <location filename="../certuploader.py" line="225"/>
         <source>Certificates, published in global address list (GAL)</source>
         <translation>Zertifikate, veröffentlicht im globalen Adressbuch (GAL)</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="222"/>
+        <location filename="../certuploader.py" line="233"/>
         <source>Query</source>
         <translation>Abfragen</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="225"/>
+        <location filename="../certuploader.py" line="236"/>
         <source>Upload</source>
         <translation>Hochladen</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="373"/>
+        <location filename="../certuploader.py" line="390"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="411"/>
+        <location filename="../certuploader.py" line="428"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="247"/>
+        <location filename="../certuploader.py" line="258"/>
         <source>Settings file:</source>
         <translation>Einstellungsdatei:</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="273"/>
+        <location filename="../certuploader.py" line="291"/>
         <source>Other Username</source>
         <translation>Anderer Benutzername</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="273"/>
+        <location filename="../certuploader.py" line="291"/>
         <source>Please enter the SAMAccountname of the user to query.</source>
         <translation>Bitte geben Sie dem SAMAccountname des abzufragenden Benutzers ein.</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="292"/>
+        <location filename="../certuploader.py" line="310"/>
         <source>Found:</source>
         <translation>Gefunden:</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="311"/>
-        <source>No results for &#xbb;%s&#xab;</source>
+        <location filename="../certuploader.py" line="323"/>
+        <source>No results for »%s«</source>
         <translation>Keine Ergebnisse für »%s«</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="426"/>
+        <location filename="../certuploader.py" line="443"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="323"/>
+        <location filename="../certuploader.py" line="341"/>
         <source>Certificate File</source>
         <translation>Zertifikatsdatei</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="333"/>
+        <location filename="../certuploader.py" line="351"/>
         <source>Certificate Password</source>
         <translation>Zertifikatspasswort</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="333"/>
+        <location filename="../certuploader.py" line="351"/>
         <source>Please enter the password to decrypt the .p12 certificate file (only the public key will be uploaded).</source>
         <translation>Bitte geben Sie das Passwort zum Entschlüsseln der .p12-Zertifikatsdatei ein (nur der öffentliche Schlüssel wird hochgeladen).</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="374"/>
+        <location filename="../certuploader.py" line="391"/>
         <source>Please select exactly 1 certificate from the list.</source>
         <translation>Bitte wählen Sie genau 1 Zertifikat in der Liste aus.</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="381"/>
+        <location filename="../certuploader.py" line="398"/>
         <source>Save Certificate Into File</source>
         <translation>Zertifikat in Datei speichern</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="412"/>
+        <location filename="../certuploader.py" line="429"/>
         <source>Are you sure you want to delete %s cert(s) from the global address list?</source>
         <translation>Sind Sie sicher, dass Sie %s Zertifikat(e) aus dem globalen Adressbuch löschen möchten?</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="435"/>
+        <location filename="../certuploader.py" line="452"/>
         <source>Please enter your Domain name (e.g. example.com).</source>
         <translation>Bitte geben Sie Ihren Domänennamen ein (z.B. example.com).</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="455"/>
+        <location filename="../certuploader.py" line="472"/>
         <source>Please enter your LDAP server IP address or DNS name.</source>
         <translation>Bitte geben Sie die IP-Adresse oder den DNS-Namen Ihres LDAP-Servers ein.</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="477"/>
+        <location filename="../certuploader.py" line="494"/>
         <source>Error connecting to LDAP server</source>
         <translation>Fehler beim Verbinden mit dem LDAP-Server</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="500"/>
+        <location filename="../certuploader.py" line="517"/>
         <source>Please consider enabling SSL in the config file (~/.config/certuploader/settings.json).</source>
         <translation>Bitte bedenken Sie SSL in der Konfigurationsdatei zu aktivieren (~/.config/certuploader/settings.json).</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="502"/>
+        <location filename="../certuploader.py" line="519"/>
         <source>Please enter the username which should be used to connect to:</source>
         <translation>Bitte geben Sie den Benutzernamen ein, welcher für die Verbindung genutzt werden soll:</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="510"/>
+        <location filename="../certuploader.py" line="527"/>
         <source>Please enter the password which should be used to connect to:</source>
         <translation>Bitte geben Sie das Passwort ein, welches für die Verbindung verwendet werden soll:</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="531"/>
+        <location filename="../certuploader.py" line="548"/>
         <source>Error binding to LDAP server</source>
         <translation>Fehler bei Authentifizierung mit dem LDAP-Server</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="561"/>
+        <location filename="../certuploader.py" line="578"/>
         <source>Error loading settings file</source>
         <translation>Fehler beim Laden der Einstellungsdatei</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="573"/>
+        <location filename="../certuploader.py" line="590"/>
         <source>Error saving settings file</source>
         <translation>Fehler beim Speichern der Einstellungsdatei</translation>
     </message>
@@ -198,64 +199,64 @@
         <translation>Der CertUploader ermöglicht es persönliche (E-Mail)-Zertifikate in das LDAP-Verzeichnis Ihrer Organisation (z.B. ActiveDirectory) hochzuladen bzw. zu veröffentlichen. Andere Mitarbeiter benötigen den öffentlichen Schlüssel Ihres Zertifikates, um Ihnen verschlüsselte E-Mails (via Outlook, Evolution oder anderer SMIME-kompatibler Mailprogramme) senden zu können.</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="170"/>
+        <location filename="../certuploader.py" line="181"/>
         <source>&amp;File</source>
         <translation>&amp;Datei</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="200"/>
+        <location filename="../certuploader.py" line="211"/>
         <source>&amp;Help</source>
         <translation>&amp;Hilfe</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="202"/>
+        <location filename="../certuploader.py" line="213"/>
         <source>&amp;About</source>
         <translation>&amp;Informationen</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="435"/>
+        <location filename="../certuploader.py" line="452"/>
         <source>Domain</source>
         <translation>Domäne</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="455"/>
+        <location filename="../certuploader.py" line="472"/>
         <source>Server Address</source>
         <translation>Serveradresse</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="502"/>
+        <location filename="../certuploader.py" line="519"/>
         <source>Username</source>
         <translation>Benutzername</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="510"/>
-        <source>Password for &#xbb;%s&#xab;</source>
+        <location filename="../certuploader.py" line="527"/>
+        <source>Password for »%s«</source>
         <translation>Passwort für »%s«</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="419"/>
-        <source>Note: if you are using a server pool, it can take some seconds until the changes are replicated on all servers.</source>
-        <translation>Hinweis: wenn Sie einen Serverpool verwenden kann es ein paar Sekunden dauern, bis die Änderungen auf alle Server repliziert wurden.</translation>
-    </message>
-    <message>
-        <location filename="../certuploader.py" line="352"/>
+        <location filename="../certuploader.py" line="370"/>
         <source>Certificate was uploaded successfully.</source>
         <translation>Zertifikat wurde erfolgreich hochgeladen.</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="386"/>
+        <location filename="../certuploader.py" line="403"/>
         <source>Certificate was saved successfully.</source>
         <translation>Zertifikat wurde erfolgreich gespeichert.</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="419"/>
+        <location filename="../certuploader.py" line="436"/>
         <source>Certificate(s) were deleted successfully.</source>
         <translation>Zertifikat(e) wurden erfolgreich gelöscht.</translation>
     </message>
     <message>
-        <location filename="../certuploader.py" line="419"/>
+        <location filename="../certuploader.py" line="436"/>
         <source>Success</source>
         <translation>Erfolg</translation>
+    </message>
+    <message>
+        <location filename="../certuploader.py" line="436"/>
+        <source>Note: if you deleted your certificate due to compromise you should also revoke your certificate. Please contact your local IT support for more information.</source>
+        <translation>Hinweis: Wenn Sie Ihr Zertifikat aufgrund einer Kompromittierung gelöscht haben, sollten Sie auch Ihr Zertifikat widerrufen (revoke). Bitte kontaktieren Sie Ihren lokalen IT-Support für weitere Informationen.</translation>
     </message>
 </context>
 </TS>
