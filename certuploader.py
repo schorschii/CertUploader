@@ -19,6 +19,11 @@ from cryptography.hazmat.primitives.serialization import pkcs12
 from cryptography.hazmat.primitives.serialization import Encoding
 from cryptography.hazmat.backends import default_backend
 
+from cryptography.x509.oid import NameOID
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
+
 # gtk2 theme is more convenient when it comes to
 # selecting files from network shares using QFileDialog (on linux)
 if os.environ.get('QT_QPA_PLATFORMTHEME') == 'qt5ct':
@@ -87,6 +92,98 @@ class CertUploaderAboutWindow(QDialog):
 
 		self.setLayout(self.layout)
 		self.setWindowTitle('About')
+
+class CertificateSigningRequestWindow(QDialog):
+	def __init__(self, mainWindow, *args, **kwargs):
+		super(CertificateSigningRequestWindow, self).__init__(*args, **kwargs)
+
+		# window layout
+		layout = QGridLayout()
+
+		lblCommonName = QLabel(QApplication.translate('CertUploader', 'Common Name'))
+		layout.addWidget(lblCommonName, 0, 0)
+		self.txtCommonName = QLineEdit()
+		layout.addWidget(self.txtCommonName, 0, 1)
+
+		lblEmail = QLabel(QApplication.translate('CertUploader', 'Email'))
+		layout.addWidget(lblEmail, 1, 0)
+		self.txtEmail = QLineEdit()
+		layout.addWidget(self.txtEmail, 1, 1)
+
+		lblPrivateKeyFile = QLabel(QApplication.translate('CertUploader', 'Private Key File'))
+		layout.addWidget(lblPrivateKeyFile, 2, 0)
+		self.txtPrivateKeyFile = QLineEdit()
+		self.txtPrivateKeyFile.setEnabled(False)
+		layout.addWidget(self.txtPrivateKeyFile, 2, 1)
+		btnChoosePrivateKeyFile = QPushButton('...')
+		btnChoosePrivateKeyFile.clicked.connect(self.OnClickChoosePrivateKeyFile)
+		layout.addWidget(btnChoosePrivateKeyFile, 2, 2)
+
+		lblCsrFile = QLabel(QApplication.translate('CertUploader', 'CSR File'))
+		layout.addWidget(lblCsrFile, 3, 0)
+		self.txtCsrFile = QLineEdit()
+		self.txtCsrFile.setEnabled(False)
+		layout.addWidget(self.txtCsrFile, 3, 1)
+		btnChooseCsrFile = QPushButton('...')
+		btnChooseCsrFile.clicked.connect(self.OnClickChooseCsrFile)
+		layout.addWidget(btnChooseCsrFile, 3, 2)
+
+		self.buttonBox = QDialogButtonBox(QDialogButtonBox.Save|QDialogButtonBox.Cancel)
+		self.buttonBox.accepted.connect(self.accept)
+		self.buttonBox.rejected.connect(self.reject)
+		layout.addWidget(self.buttonBox, 4, 0, 1, 3)
+		self.setLayout(layout)
+
+		# window properties
+		self.setWindowTitle(QApplication.translate('CertUploader', 'Generate Certificate Signing Request'))
+
+	def OnClickChoosePrivateKeyFile(self, e):
+		fileName, _ = QFileDialog.getSaveFileName(self, QApplication.translate('CertUploader', 'Private Key File'), 'vpn.key', 'PEM encoded (*.key);;')
+		if fileName: self.txtPrivateKeyFile.setText(fileName)
+
+	def OnClickChooseCsrFile(self, e):
+		fileName, _ = QFileDialog.getSaveFileName(self, QApplication.translate('CertUploader', 'CSR File'), 'vpn.csr', 'PEM encoded (*.csr);;')
+		if fileName: self.txtCsrFile.setText(fileName)
+
+	def accept(self):
+		try:
+			key = rsa.generate_private_key(
+				public_exponent=65537,
+				key_size=2048,
+			)
+			with open(self.txtPrivateKeyFile.text(), 'wb') as f:
+				f.write(key.private_bytes(
+					encoding=serialization.Encoding.PEM,
+					format=serialization.PrivateFormat.TraditionalOpenSSL,
+					encryption_algorithm=serialization.NoEncryption(), #serialization.BestAvailableEncryption(b'passphrase'),
+				))
+			csr = x509.CertificateSigningRequestBuilder().subject_name(x509.Name([
+				x509.NameAttribute(NameOID.COMMON_NAME, self.txtCommonName.text()),
+			])).add_extension(
+				x509.SubjectAlternativeName([
+					x509.RFC822Name(self.txtEmail.text()),
+				]),
+				critical=True
+			).sign(key, hashes.SHA256())
+			with open(self.txtCsrFile.text(), 'wb') as f:
+				f.write(csr.public_bytes(serialization.Encoding.PEM))
+
+			msg = QMessageBox()
+			msg.setIcon(QMessageBox.Information)
+			msg.setWindowTitle(QApplication.translate('CertUploader', 'CSR Generated Successfully'))
+			msg.setText(QApplication.translate('CertUploader', 'Next, submit your CSR to your certification authority (CA) to get your certificate.'))
+			msg.setDetailedText(csr.public_bytes(serialization.Encoding.PEM).decode('ascii'))
+			msg.setStandardButtons(QMessageBox.Ok)
+			msg.exec_()
+			self.close()
+
+		except Exception as e:
+			msg = QMessageBox()
+			msg.setIcon(QMessageBox.Critical)
+			msg.setWindowTitle(QApplication.translate('CertUploader', 'Error'))
+			msg.setText(str(e))
+			msg.setStandardButtons(QMessageBox.Ok)
+			msg.exec_()
 
 class CertTableView(QTableWidget):
 	def __init__(self, *args):
@@ -161,7 +258,6 @@ class CertUploaderMainWindow(QMainWindow):
 	cfgLdapAttributeCertificates = 'userCertificate'
 	cfgExpiryWarnDays = 25
 
-
 	def __init__(self):
 		super(CertUploaderMainWindow, self).__init__()
 		try:
@@ -200,6 +296,11 @@ class CertUploaderMainWindow(QMainWindow):
 		queryAction2.setShortcut('F3')
 		queryAction2.triggered.connect(self.OnClickQueryOtherUser)
 		fileMenu.addAction(queryAction2)
+		fileMenu.addSeparator()
+		requestAction = QAction(QApplication.translate('CertUploader', 'Generate Certificate Signing &Request (CSR)'), self)
+		requestAction.setShortcut('F4')
+		requestAction.triggered.connect(self.OnClickGenerateCsr)
+		fileMenu.addAction(requestAction)
 		fileMenu.addSeparator()
 		uploadAction = QAction(QApplication.translate('CertUploader', '&Upload'), self)
 		uploadAction.setShortcut('F5')
@@ -265,7 +366,7 @@ class CertUploaderMainWindow(QMainWindow):
 		self.setCentralWidget(widget)
 
 		# Window Settings
-		self.setMinimumSize(480, 300)
+		self.setMinimumSize(500, 360)
 		self.setWindowTitle(self.PRODUCT_NAME+ ' v' + self.PRODUCT_VERSION)
 		self.statusBar.showMessage(QApplication.translate('CertUploader', 'Settings file:')+' '+cfgPath)
 
@@ -305,6 +406,10 @@ class CertUploaderMainWindow(QMainWindow):
 		self.btnUpload.setEnabled(state)
 		self.btnSave.setEnabled(state)
 		self.btnDelete.setEnabled(state)
+
+	def OnClickGenerateCsr(self, e):
+		dialog = CertificateSigningRequestWindow(self)
+		dialog.exec_()
 
 	def OnClickQueryOtherUser(self, e):
 		# ask for credentials

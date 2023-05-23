@@ -262,5 +262,37 @@
         <source>[cached view]</source>
         <translation>[zwischengespeicherte Ansicht]</translation>
     </message>
+    <message>
+        <source>Generate Certificate Signing &amp;Request (CSR)</source>
+        <translation>Certificate Signing &amp;Request (CSR) generieren</translation>
+    </message>
+    <message>
+        <source>Common Name</source>
+        <translation>Allgemeiner Name</translation>
+    </message>
+    <message>
+        <source>Email</source>
+        <translation>E-Mail</translation>
+    </message>
+    <message>
+        <source>Private Key File</source>
+        <translation>Private Schlüssel-Datei</translation>
+    </message>
+    <message>
+        <source>CSR File</source>
+        <translation>CSR-Datei</translation>
+    </message>
+    <message>
+        <source>Generate Certificate Signing Request</source>
+        <translation>Certificate Signing Request erstellen</translation>
+    </message>
+    <message>
+        <source>CSR Generated Successfully</source>
+        <translation>CSR wurde erfolgreich erstellt</translation>
+    </message>
+    <message>
+        <source>Next, submit your CSR to your certification authority (CA) to get your certificate.</source>
+        <translation>Reichen Sie den CSR als nächstes bei Ihrer Zertifizierungsstelle (CA) ein, um ein Zertifikat zu erhalten.</translation>
+    </message>
 </context>
 </TS>
