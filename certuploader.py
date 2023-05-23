@@ -6,6 +6,8 @@ from pathlib import Path
 from os import path, makedirs, rename
 from datetime import datetime
 from dns import resolver, rdatatype
+import argparse
+import base64
 import getpass
 import ldap3
 import json
@@ -25,6 +27,16 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from locale import getdefaultlocale
+
+
+cfgPresetDirWindows = path.dirname(sys.executable) if getattr(sys, 'frozen', False) else sys.path[0]
+cfgPresetDirUnix    = '/etc'
+cfgPresetFile       = 'certuploader.json'
+cfgPresetPath       = (cfgPresetDirWindows if sys.platform.lower()=='win32' else cfgPresetDirUnix)+'/'+cfgPresetFile
+
+cfgDir    = str(Path.home())+'/.config/certuploader'
+cfgPath   = cfgDir+'/settings.json'
+cachePath = cfgDir+'/certificates.json'
 
 
 class CertUploaderAboutWindow(QDialog):
@@ -47,7 +59,7 @@ class CertUploaderAboutWindow(QDialog):
 		labelCopyright = QLabel(self)
 		labelCopyright.setText(
 			'<br>'
-			'© 2021-2022 <a href=\'https://georg-sieber.de\'>Georg Sieber</a>'
+			'© 2021-2023 <a href=\'https://georg-sieber.de\'>Georg Sieber</a>'
 			'<br>'
 			'<br>'
 			'GNU General Public License v3.0'
@@ -130,8 +142,6 @@ class CertTableView(QTableWidget):
 			return ''
 
 class CertUploaderMainWindow(QMainWindow):
-	PLATFORM          = sys.platform.lower()
-
 	PRODUCT_NAME      = 'CertUploader'
 	PRODUCT_VERSION   = '1.1.0'
 	PRODUCT_WEBSITE   = 'https://github.com/schorschii/certuploader'
@@ -142,26 +152,28 @@ class CertUploaderMainWindow(QMainWindow):
 	server      = None
 	connection  = None
 	tmpDn       = ''
-	tmpCerts    = []
 
-	cfgPresetDirWindows = path.dirname(sys.executable) if getattr(sys, 'frozen', False) else sys.path[0]
-	cfgPresetDirUnix    = '/etc'
-	cfgPresetFile       = 'certuploader.json'
-	cfgPresetPath       = (cfgPresetDirWindows if PLATFORM=='win32' else cfgPresetDirUnix)+'/'+cfgPresetFile
-
-	cfgDir           = str(Path.home())+'/.config/certuploader'
-	cfgPath          = cfgDir+'/settings.json'
 	cfgServer        = []
 	cfgDomain        = ''
 	cfgUsername      = ''
 	cfgPassword      = ''
 	cfgQueryUsername = ''
 	cfgLdapAttributeCertificates = 'userCertificate'
+	cfgExpiryWarnDays = 25
 
 
 	def __init__(self):
 		super(CertUploaderMainWindow, self).__init__()
-		self.LoadSettings()
+		try:
+			dctSettings = LoadSettings()
+			self.cfgServer = dctSettings['server']
+			self.cfgDomain = dctSettings['domain']
+			self.cfgUsername = dctSettings['username']
+			self.cfgQueryUsername = self.cfgUsername
+			self.cfgLdapAttributeCertificates = dctSettings['ldap-attribute-certificates']
+			self.cfgExpiryWarnDays = dctSettings['expiry-warn-days']
+		except Exception as e:
+			self.showErrorDialog(QApplication.translate('CertUploader', 'Error loading settings file'), str(e))
 		self.InitUI()
 
 	def InitUI(self):
@@ -223,7 +235,7 @@ class CertUploaderMainWindow(QMainWindow):
 		gridLine = 0
 
 		self.lblMyCertificates = QLabel(QApplication.translate('CertUploader', 'Certificates, published in global address list (GAL)'))
-		grid.addWidget(self.lblMyCertificates, gridLine, 0)
+		grid.addWidget(self.lblMyCertificates, gridLine, 0, 1, 2)
 
 		gridLine += 1
 		self.lstMyCertificates = CertTableView()
@@ -255,7 +267,14 @@ class CertUploaderMainWindow(QMainWindow):
 		# Window Settings
 		self.setMinimumSize(480, 300)
 		self.setWindowTitle(self.PRODUCT_NAME+ ' v' + self.PRODUCT_VERSION)
-		self.statusBar.showMessage(QApplication.translate('CertUploader', 'Settings file:')+' '+self.cfgPath)
+		self.statusBar.showMessage(QApplication.translate('CertUploader', 'Settings file:')+' '+cfgPath)
+
+		# Load Cache
+		certs = LoadCertCache()
+		if len(certs) > 0:
+			self.lblMyCertificates.setText( self.lblMyCertificates.text() + ' ' + QApplication.translate('CertUploader', '[cached view]') )
+			self.btnSave.setEnabled(True)
+			self.lstMyCertificates.setData(certs)
 
 	def OnQuit(self, e):
 		sys.exit()
@@ -281,6 +300,11 @@ class CertUploaderMainWindow(QMainWindow):
 			return dialog.selectedFiles()[0]
 		else:
 			return ''
+
+	def ToggleButtonEnabled(self, state):
+		self.btnUpload.setEnabled(state)
+		self.btnSave.setEnabled(state)
+		self.btnDelete.setEnabled(state)
 
 	def OnClickQueryOtherUser(self, e):
 		# ask for credentials
@@ -309,16 +333,15 @@ class CertUploaderMainWindow(QMainWindow):
 			for entry in self.connection.entries:
 				self.statusBar.showMessage(QApplication.translate('CertUploader', 'Found:')+' '+str(entry['distinguishedName'])+' ('+str(self.connection.server)+')')
 				self.tmpDn = str(entry['distinguishedName'])
-				self.btnUpload.setEnabled(True)
-				self.btnSave.setEnabled(True)
-				self.btnDelete.setEnabled(True)
+				self.ToggleButtonEnabled(True)
+
+				SaveCertCache(entry[self.cfgLdapAttributeCertificates])
 				self.lstMyCertificates.setData(entry[self.cfgLdapAttributeCertificates])
+				self.lblMyCertificates.setText(QApplication.translate('CertUploader', 'Certificates, published in global address list (GAL)'))
 				return
 
 			# no result found
-			self.btnUpload.setEnabled(False)
-			self.btnSave.setEnabled(False)
-			self.btnDelete.setEnabled(False)
+			self.ToggleButtonEnabled(False)
 			self.lstMyCertificates.setRowCount(0)
 			self.statusBar.showMessage(QApplication.translate('CertUploader', 'No results for »%s«') % self.cfgQueryUsername + ' ('+str(self.connection.server)+')')
 		except Exception as e:
@@ -384,7 +407,7 @@ class CertUploaderMainWindow(QMainWindow):
 		binaryCerts = []
 		for row in sorted(self.lstMyCertificates.selectionModel().selectedRows()):
 			binaryCerts.append(self.lstMyCertificates.tmpCerts[row.row()])
-		if self.tmpDn == '' or len(binaryCerts) != 1:
+		if len(binaryCerts) != 1:
 			msg = QMessageBox()
 			msg.setIcon(QMessageBox.Warning)
 			msg.setWindowTitle(QApplication.translate('CertUploader', 'Save'))
@@ -402,13 +425,13 @@ class CertUploaderMainWindow(QMainWindow):
 				f.close()
 			self.showInfoDialog(QApplication.translate('CertUploader', 'Success'),
 				QApplication.translate('CertUploader', 'Certificate was saved successfully.'),
-				self.tmpDn+' ('+str(self.connection.server)+')'
+				''
 			)
 		except Exception as e:
 			# display error
 			self.showErrorDialog(QApplication.translate('CertUploader', 'Error'),
 				str(e),
-				self.tmpDn+' ('+str(self.connection.server)+')'
+				''
 			)
 
 	def OnClickDelete(self, e):
@@ -550,6 +573,12 @@ class CertUploaderMainWindow(QMainWindow):
 
 		return True # return if connection created successfully
 
+	def SaveSettings(self):
+		try:
+			SaveSettings(self.cfgServer, self.cfgDomain, self.cfgUsername, self.cfgLdapAttributeCertificates, self.cfgExpiryWarnDays)
+		except Exception as e:
+			self.showErrorDialog(QApplication.translate('CertUploader', 'Error saving settings file'), str(e))
+
 	def createLdapBase(self, domain):
 		# convert FQDN 'example.com' to LDAP path notation 'DC=example,DC=com'
 		search_base = ''
@@ -557,37 +586,6 @@ class CertUploaderMainWindow(QMainWindow):
 		for b in base:
 			search_base += 'DC=' + b + ','
 		return search_base[:-1]
-
-	def LoadSettings(self):
-		if(not path.isdir(self.cfgDir)):
-			makedirs(self.cfgDir, exist_ok=True)
-
-		if(path.isfile(self.cfgPath)): cfgPath = self.cfgPath
-		elif(path.isfile(self.cfgPresetPath)): cfgPath = self.cfgPresetPath
-		else: return
-
-		try:
-			with open(cfgPath) as f:
-				cfgJson = json.load(f)
-				self.cfgServer = cfgJson.get('server', '')
-				self.cfgDomain = cfgJson.get('domain', '')
-				self.cfgUsername = cfgJson.get('username', '')
-				self.cfgQueryUsername = self.cfgUsername
-				self.cfgLdapAttributeCertificates = str(cfgJson.get('ldap-attribute-certificates', self.cfgLdapAttributeCertificates))
-		except Exception as e:
-			self.showErrorDialog(QApplication.translate('CertUploader', 'Error loading settings file'), str(e))
-
-	def SaveSettings(self):
-		try:
-			with open(self.cfgPath, 'w') as json_file:
-				json.dump({
-					'server': self.cfgServer,
-					'domain': self.cfgDomain,
-					'username': self.cfgUsername,
-					'ldap-attribute-certificates': self.cfgLdapAttributeCertificates
-				}, json_file, indent=4)
-		except Exception as e:
-			self.showErrorDialog(QApplication.translate('CertUploader', 'Error saving settings file'), str(e))
 
 	def showErrorDialog(self, title, text, additionalText=''):
 		print('Error: '+text)
@@ -608,7 +606,62 @@ class CertUploaderMainWindow(QMainWindow):
 		msg.setStandardButtons(QMessageBox.Ok)
 		retval = msg.exec_()
 
+def LoadSettings():
+	if(not path.isdir(cfgDir)):
+		makedirs(cfgDir, exist_ok=True)
+
+	cfgPathDetermined = None
+	if(path.isfile(cfgPath)): cfgPathDetermined = cfgPath
+	elif(path.isfile(cfgPresetPath)): cfgPathDetermined = cfgPresetPath
+	else: return
+
+	with open(cfgPathDetermined) as f:
+		cfgJson = json.load(f)
+		return {
+			'server': cfgJson.get('server', ''),
+			'domain': cfgJson.get('domain', ''),
+			'username': cfgJson.get('username', ''),
+			'ldap-attribute-certificates': str(cfgJson.get('ldap-attribute-certificates', CertUploaderMainWindow.cfgLdapAttributeCertificates)),
+			'expiry-warn-days': int(cfgJson.get('expiry-warn-days', CertUploaderMainWindow.cfgExpiryWarnDays)),
+		}
+
+def SaveSettings(server, domain, username, ldapAttributeCertificates, expiryWarnDays):
+	with open(cfgPath, 'w') as json_file:
+		json.dump({
+			'server': server,
+			'domain': domain,
+			'username': username,
+			'ldap-attribute-certificates': ldapAttributeCertificates,
+			'expiry-warn-days': expiryWarnDays,
+		}, json_file, indent=4)
+
+def LoadCertCache():
+	if(not path.isdir(cfgDir)):
+		makedirs(cfgDir, exist_ok=True)
+	try:
+		with open(cachePath) as f:
+			binaryCerts = []
+			for b64Cert in json.load(f):
+				binaryCerts.append(base64.b64decode(b64Cert))
+			return binaryCerts
+	except Exception as e:
+		return []
+
+def SaveCertCache(lstCerts):
+	try:
+		with open(cachePath, 'w') as json_file:
+			b64Certs = []
+			for binaryCert in lstCerts:
+				b64Certs.append(base64.b64encode(binaryCert).decode('ascii'))
+			json.dump(b64Certs, json_file, indent=4)
+	except Exception as e:
+		return []
+
 def main():
+	parser = argparse.ArgumentParser(epilog='© 2021-2023 Georg Sieber - https://georg-sieber.de')
+	parser.add_argument('-c', '--check-expiry', action='store_true', help='Do not start the main GUI but check the expiration dates of the cached certificates and show a warning if a certificate expires soon. Intended for use with autostart.')
+	args = parser.parse_args()
+
 	app = QApplication(sys.argv)
 	translator = QTranslator(app)
 	if getattr(sys, 'frozen', False):
@@ -619,9 +672,34 @@ def main():
 		translator.load('/usr/share/certuploader/lang/%s.qm' % getdefaultlocale()[0])
 	app.installTranslator(translator)
 
-	window = CertUploaderMainWindow()
-	window.show()
-	sys.exit(app.exec_())
+	if args.check_expiry:
+		import gi
+		gi.require_version('Notify', '0.7')
+		from gi.repository import Notify
+		Notify.init(CertUploaderMainWindow.PRODUCT_NAME)
+
+		settings = LoadSettings()
+		for binaryCert in LoadCertCache():
+			try:
+				cert = x509.load_der_x509_certificate(binaryCert, default_backend())
+				if (cert.not_valid_after - datetime.now()).days < settings['expiry-warn-days']:
+					certIssuedFor = str(cert.subject.get_attributes_for_oid(x509.NameOID.COMMON_NAME)[0].value)
+					certIssuer = str(cert.issuer.get_attributes_for_oid(x509.NameOID.COMMON_NAME)[0].value)
+					print('Certificate from »'+certIssuer+'« for »'+certIssuedFor+'« will expire on '+str(cert.not_valid_after)+'!')
+					Notify.Notification.new(
+						CertUploaderMainWindow.PRODUCT_NAME,
+						QApplication.translate('CertUploader', 'Certificate from »%1« for »%2« will expire on %3!')
+							.replace('%1', certIssuer)
+							.replace('%2', certIssuedFor)
+							.replace('%3', str(cert.not_valid_after))
+					).show()
+			except Exception as e:
+				print(e)
+
+	else:
+		window = CertUploaderMainWindow()
+		window.show()
+		sys.exit(app.exec_())
 
 if __name__ == '__main__':
 	main()

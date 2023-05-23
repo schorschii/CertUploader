@@ -18,5 +18,6 @@
     ],
     "domain": "example.com",
     "username": "johndoe",
-    "ldap-attribute-certificates": "userCertificate"
+    "ldap-attribute-certificates": "userCertificate",
+    "expiry-warn-days": 25
 }
