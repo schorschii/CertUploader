@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=CertUploader Expiration Check
+Exec=/usr/bin/certuploader --check-expiry
+Type=Application
+Comment=Check expiration date of your certificates and show a warning if one of them expires soon
+Comment[de_DE]=Überprüft das Ablaufdatum Ihrer Zertifikate und zeigt eine Warnung, wenn eines davon bald abläuft
+Icon=/usr/share/pixmaps/certuploader.png
+Categories=Application;Office
+Terminal=false
