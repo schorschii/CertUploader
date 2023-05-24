@@ -17,6 +17,12 @@ It is highly recommended to turn on SSL in the config file (`~/.config/laps-clie
 ### Default Config File
 You can create a preset config file `/etc/certuploader.json` which will be loaded if `~/.config/certuploader/settings.json` does not exist. With this, you can distribute default settings (SSL on etc.) for new users.
 
+### Certificate Cache
+Once you queried your certificates they will be cached in `~/.config/certuploader/certificates.json` and shown on next program start without LDAP query.
+
+### Certificate Expiration Check
+You can start CertUploader with the parameter `--check-expiry`. This will check the cached certificates and display a desktop notification if one of them expires soon (time range can be defined in the settings file). It is intended to place this script call in your autostart.
+
 ### Tested Platforms
 The application is executable under Linux, Windows and macOS.
 
