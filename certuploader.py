@@ -419,11 +419,15 @@ class CertUploaderMainWindow(QMainWindow):
 		# set custom query username
 		item, ok = QInputDialog.getText(self, QApplication.translate('CertUploader', 'Other Username'), QApplication.translate('CertUploader', 'Please enter the SAMAccountname of the user to query.'))
 		if ok and item:
-			self.cfgQueryUsername = item
-		else: return
-		self.OnClickQuery(None)
+			self.queryCertificates(item)
 
 	def OnClickQuery(self, e):
+		self.queryCertificates()
+
+	def queryCertificates(self, customQueryAccountName=None):
+		queryUsername = self.cfgQueryUsername
+		if customQueryAccountName: queryUsername = customQueryAccountName
+
 		# ask for credentials
 		if not self.checkCredentialsAndConnect():
 			return
@@ -432,7 +436,7 @@ class CertUploaderMainWindow(QMainWindow):
 			# start LDAP search
 			self.connection.search(
 				search_base=self.createLdapBase(self.cfgDomain),
-				search_filter='(&(objectCategory=user)(samaccountname='+self.cfgQueryUsername+'))',
+				search_filter='(&(objectCategory=user)(samaccountname='+queryUsername+'))',
 				attributes=['SAMAccountname', 'distinguishedName', self.cfgLdapAttributeCertificates]
 			)
 			for entry in self.connection.entries:
@@ -440,7 +444,10 @@ class CertUploaderMainWindow(QMainWindow):
 				self.tmpDn = str(entry['distinguishedName'])
 				self.ToggleButtonEnabled(True)
 
-				SaveCertCache(entry[self.cfgLdapAttributeCertificates])
+				# store only own certificates in cache
+				if not customQueryAccountName:
+					SaveCertCache(entry[self.cfgLdapAttributeCertificates])
+
 				self.lstMyCertificates.setData(entry[self.cfgLdapAttributeCertificates])
 				self.lblMyCertificates.setText(QApplication.translate('CertUploader', 'Certificates, published in global address list (GAL)'))
 				return
@@ -448,7 +455,7 @@ class CertUploaderMainWindow(QMainWindow):
 			# no result found
 			self.ToggleButtonEnabled(False)
 			self.lstMyCertificates.setRowCount(0)
-			self.statusBar.showMessage(QApplication.translate('CertUploader', 'No results for »%s«') % self.cfgQueryUsername + ' ('+str(self.connection.server)+')')
+			self.statusBar.showMessage(QApplication.translate('CertUploader', 'No results for »%s«') % queryUsername + ' ('+str(self.connection.server)+')')
 		except Exception as e:
 			# display error
 			self.statusBar.showMessage(str(e))
