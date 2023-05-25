@@ -146,7 +146,7 @@ class CertificateSigningRequestWindow(QDialog):
 		if fileName: self.txtPrivateKeyFile.setText(fileName)
 
 	def OnClickChooseCsrFile(self, e):
-		fileName, _ = QFileDialog.getSaveFileName(self, QApplication.translate('CertUploader', 'CSR File'), 'vpn.csr', 'PEM encoded (*.csr);;')
+		fileName, _ = QFileDialog.getSaveFileName(self, QApplication.translate('CertUploader', 'CSR File'), 'vpn.csr.pem', 'PEM encoded (*.csr);;')
 		if fileName: self.txtCsrFile.setText(fileName)
 
 	def accept(self):
@@ -163,12 +163,15 @@ class CertificateSigningRequestWindow(QDialog):
 				))
 			csr = x509.CertificateSigningRequestBuilder().subject_name(x509.Name([
 				x509.NameAttribute(NameOID.COMMON_NAME, self.txtCommonName.text()),
-			])).add_extension(
-				x509.SubjectAlternativeName([
-					x509.RFC822Name(self.txtEmail.text()),
-				]),
-				critical=True
-			).sign(key, hashes.SHA256())
+			]))
+			if self.txtEmail.text() != '':
+				csr = csr.add_extension(
+					x509.SubjectAlternativeName([
+						x509.RFC822Name(self.txtEmail.text()),
+					]),
+					critical=True
+				)
+			csr = csr.sign(key, hashes.SHA256())
 			with open(self.txtCsrFile.text(), 'wb') as f:
 				f.write(csr.public_bytes(serialization.Encoding.PEM))
 
