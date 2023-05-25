@@ -294,5 +294,9 @@
         <source>Next, submit your CSR to your certification authority (CA) to get your certificate.</source>
         <translation>Reichen Sie den CSR als nächstes bei Ihrer Zertifizierungsstelle (CA) ein, um ein Zertifikat zu erhalten.</translation>
     </message>
+    <message>
+        <source>Certificate from »%1« for »%2« will expire on %3!</source>
+        <translation>Zertifikat von »%1« für »%2« läuft am %3 ab!</translation>
+    </message>
 </context>
 </TS>
