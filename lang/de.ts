@@ -298,5 +298,13 @@
         <source>Certificate from »%1« for »%2« will expire on %3!</source>
         <translation>Zertifikat von »%1« für »%2« läuft am %3 ab!</translation>
     </message>
+    <message>
+        <source>no path selected</source>
+        <translation>kein Pfad ausgewählt</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Abbruch</translation>
+    </message>
 </context>
 </TS>

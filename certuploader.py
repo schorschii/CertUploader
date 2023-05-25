@@ -113,6 +113,7 @@ class CertificateSigningRequestWindow(QDialog):
 		lblPrivateKeyFile = QLabel(QApplication.translate('CertUploader', 'Private Key File'))
 		layout.addWidget(lblPrivateKeyFile, 2, 0)
 		self.txtPrivateKeyFile = QLineEdit()
+		self.txtPrivateKeyFile.setPlaceholderText(QApplication.translate('CertUploader', 'no path selected'))
 		self.txtPrivateKeyFile.setEnabled(False)
 		layout.addWidget(self.txtPrivateKeyFile, 2, 1)
 		btnChoosePrivateKeyFile = QPushButton('...')
@@ -122,6 +123,7 @@ class CertificateSigningRequestWindow(QDialog):
 		lblCsrFile = QLabel(QApplication.translate('CertUploader', 'CSR File'))
 		layout.addWidget(lblCsrFile, 3, 0)
 		self.txtCsrFile = QLineEdit()
+		self.txtCsrFile.setPlaceholderText(QApplication.translate('CertUploader', 'no path selected'))
 		self.txtCsrFile.setEnabled(False)
 		layout.addWidget(self.txtCsrFile, 3, 1)
 		btnChooseCsrFile = QPushButton('...')
@@ -129,6 +131,8 @@ class CertificateSigningRequestWindow(QDialog):
 		layout.addWidget(btnChooseCsrFile, 3, 2)
 
 		self.buttonBox = QDialogButtonBox(QDialogButtonBox.Save|QDialogButtonBox.Cancel)
+		self.buttonBox.button(QDialogButtonBox.Save).setText(QApplication.translate('CertUploader', 'Save'))
+		self.buttonBox.button(QDialogButtonBox.Cancel).setText(QApplication.translate('CertUploader', 'Cancel'))
 		self.buttonBox.accepted.connect(self.accept)
 		self.buttonBox.rejected.connect(self.reject)
 		layout.addWidget(self.buttonBox, 4, 0, 1, 3)
@@ -149,7 +153,7 @@ class CertificateSigningRequestWindow(QDialog):
 		try:
 			key = rsa.generate_private_key(
 				public_exponent=65537,
-				key_size=2048,
+				key_size=4096,
 			)
 			with open(self.txtPrivateKeyFile.text(), 'wb') as f:
 				f.write(key.private_bytes(
@@ -425,12 +429,13 @@ class CertUploaderMainWindow(QMainWindow):
 		self.queryCertificates()
 
 	def queryCertificates(self, customQueryAccountName=None):
-		queryUsername = self.cfgQueryUsername
-		if customQueryAccountName: queryUsername = customQueryAccountName
-
 		# ask for credentials
 		if not self.checkCredentialsAndConnect():
 			return
+
+		# determine query account name
+		queryUsername = self.cfgQueryUsername
+		if customQueryAccountName: queryUsername = customQueryAccountName
 
 		try:
 			# start LDAP search
