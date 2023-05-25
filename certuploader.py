@@ -803,7 +803,8 @@ def main():
 						QApplication.translate('CertUploader', 'Certificate from »%1« for »%2« will expire on %3!')
 							.replace('%1', certIssuer)
 							.replace('%2', certIssuedFor)
-							.replace('%3', str(cert.not_valid_after))
+							.replace('%3', str(cert.not_valid_after)),
+						'dialog-warning'
 					).show()
 			except Exception as e:
 				print(e)
