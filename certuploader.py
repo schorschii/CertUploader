@@ -388,9 +388,6 @@ class CertUploaderMainWindow(QMainWindow):
 		dlg = CertUploaderAboutWindow(self)
 		dlg.exec_()
 
-	def OnReturnSearch(self):
-		self.OnClickUpload(None)
-
 	def OpenFileDialog(self, title, filter):
 		fileName, _ = QFileDialog.getOpenFileName(self, title, None, filter)
 		return fileName
@@ -478,7 +475,7 @@ class CertUploaderMainWindow(QMainWindow):
 		if self.tmpDn == '': return
 
 		# choose file
-		fileName = self.OpenFileDialog(QApplication.translate('CertUploader', 'Certificate File'), 'Certificate Files (*.cer *.p12);;All Files (*.*)')
+		fileName = self.OpenFileDialog(QApplication.translate('CertUploader', 'Certificate File'), 'Certificate Files (*.cer *.crt *.pem *.p12);;All Files (*.*)')
 		if not fileName: return
 		with open(fileName, 'rb') as f: certContent = f.read()
 
@@ -486,7 +483,12 @@ class CertUploaderMainWindow(QMainWindow):
 		try:
 			_, fileExtension = path.splitext(fileName)
 			if fileExtension == '.cer':
+				# DER binary is already the target format
+				# we just try to parse it - if it is not a correct certificate, exit with error
 				x509.load_der_x509_certificate(certContent, default_backend())
+			elif fileExtension == '.crt' or fileExtension == '.pem':
+				cert = x509.load_pem_x509_certificate(certContent)
+				certContent = cert.public_bytes(Encoding.DER)
 			elif fileExtension == '.p12':
 				item, ok = QInputDialog.getText(self, QApplication.translate('CertUploader', 'Certificate Password'), QApplication.translate('CertUploader', 'Please enter the password to decrypt the .p12 certificate file (only the public key will be uploaded).'), QLineEdit.Password)
 				if ok:
