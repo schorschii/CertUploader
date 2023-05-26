@@ -735,17 +735,19 @@ def LoadSettings():
 	cfgPathDetermined = None
 	if(path.isfile(cfgPath)): cfgPathDetermined = cfgPath
 	elif(path.isfile(cfgPresetPath)): cfgPathDetermined = cfgPresetPath
-	else: return
 
-	with open(cfgPathDetermined) as f:
-		cfgJson = json.load(f)
-		return {
-			'server': cfgJson.get('server', ''),
-			'domain': cfgJson.get('domain', ''),
-			'username': cfgJson.get('username', ''),
-			'ldap-attribute-certificates': str(cfgJson.get('ldap-attribute-certificates', CertUploaderMainWindow.cfgLdapAttributeCertificates)),
-			'expiry-warn-days': int(cfgJson.get('expiry-warn-days', CertUploaderMainWindow.cfgExpiryWarnDays)),
-		}
+	cfgJson = {}
+	if(cfgPathDetermined):
+		with open(cfgPathDetermined) as f:
+			cfgJson = json.load(f)
+
+	return {
+		'server': cfgJson.get('server', ''),
+		'domain': cfgJson.get('domain', ''),
+		'username': cfgJson.get('username', ''),
+		'ldap-attribute-certificates': str(cfgJson.get('ldap-attribute-certificates', CertUploaderMainWindow.cfgLdapAttributeCertificates)),
+		'expiry-warn-days': int(cfgJson.get('expiry-warn-days', CertUploaderMainWindow.cfgExpiryWarnDays)),
+	}
 
 def SaveSettings(server, domain, username, ldapAttributeCertificates, expiryWarnDays):
 	with open(cfgPath, 'w') as json_file:
