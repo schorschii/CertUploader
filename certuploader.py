@@ -238,12 +238,14 @@ class CertTableView(QTableWidget):
 		self.resizeRowsToContents()
 
 	def GetExtendedKeyUsages(self, cert):
+		usages = []
 		try:
 			ext = cert.extensions.get_extension_for_class(x509.ExtendedKeyUsage)
 			for usage in ext.value:
-				return str(usage.dotted_string if usage._name == 'Unknown OID' else usage._name)
+				usages.append( str(usage.dotted_string if usage._name == 'Unknown OID' else usage._name) )
 		except x509.ExtensionNotFound:
-			return ''
+			return '-'
+		return ', '.join(usages)
 
 class CertUploaderMainWindow(QMainWindow):
 	PRODUCT_NAME      = 'CertUploader'
