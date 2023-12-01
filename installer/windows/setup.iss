@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "CertUploader"
-#define MyAppVersion "1.1.0"
+#define MyAppVersion "1.2.2"
 #define MyAppPublisher "Sieber Systems"
 #define MyAppURL "https://github.com/schorschii/certuploader"
 #define MyAppExeName "certuploader.exe"
