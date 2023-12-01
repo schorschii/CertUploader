@@ -249,7 +249,7 @@ class CertTableView(QTableWidget):
 
 class CertUploaderMainWindow(QMainWindow):
 	PRODUCT_NAME      = 'CertUploader'
-	PRODUCT_VERSION   = '1.2.1'
+	PRODUCT_VERSION   = '1.2.2'
 	PRODUCT_WEBSITE   = 'https://github.com/schorschii/certuploader'
 	PRODUCT_ICON      = 'certuploader.png'
 	PRODUCT_ICON_PATH = '/usr/share/pixmaps'
