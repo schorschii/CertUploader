@@ -34,6 +34,11 @@
         <translation>Ablauf</translation>
     </message>
     <message>
+        <location filename="../certuploader.py" line="115"/>
+        <source>Serial Number (hex)</source>
+        <translation>Seriennummer (hex)</translation>
+    </message>
+    <message>
         <location filename="../certuploader.py" line="187"/>
         <source>Query &amp;Other User Certificates</source>
         <translation>Anderer Benutzer &amp;Zertifikate abfragen</translation>

@@ -202,7 +202,7 @@ class CertTableView(QTableWidget):
 		self.tmpCerts = certs
 
 		self.setRowCount(len(self.tmpCerts))
-		self.setColumnCount(4)
+		self.setColumnCount(5)
 
 		counter = 0
 		for binaryCert in self.tmpCerts:
@@ -212,11 +212,13 @@ class CertTableView(QTableWidget):
 				certIssuer = str(cert.issuer.get_attributes_for_oid(x509.NameOID.COMMON_NAME)[0].value)
 				certUsage = str(self.GetExtendedKeyUsages(cert))
 				certExpiry = str(cert.not_valid_after)
+				certSerial = '{:x}'.format(cert.serial_number).upper()
 			except Exception as e:
 				certIssuedFor = QApplication.translate('CertUploader', 'INVALID CERTIFICATE')
 				certIssuer = str(e)
 				certUsage = ''
 				certExpiry = ''
+				certSerial = ''
 
 			newItem = QTableWidgetItem(certIssuedFor)
 			self.setItem(counter, 0, newItem)
@@ -226,13 +228,16 @@ class CertTableView(QTableWidget):
 			self.setItem(counter, 2, newItem)
 			newItem = QTableWidgetItem(certExpiry)
 			self.setItem(counter, 3, newItem)
+			newItem = QTableWidgetItem(certSerial)
+			self.setItem(counter, 4, newItem)
 			counter += 1
 
 		self.setHorizontalHeaderLabels([
 			QApplication.translate('CertUploader', 'Issued for'),
 			QApplication.translate('CertUploader', 'Issuer'),
 			QApplication.translate('CertUploader', 'Usage'),
-			QApplication.translate('CertUploader', 'Expiry')
+			QApplication.translate('CertUploader', 'Expiry'),
+			QApplication.translate('CertUploader', 'Serial Number (hex)')
 		])
 		self.resizeColumnsToContents()
 		self.resizeRowsToContents()
