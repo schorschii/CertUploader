@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from .__init__ import __title__, __version__, __website__
+
 from urllib.parse import unquote
 from pathlib import Path
 from os import path, makedirs, rename
@@ -253,9 +255,9 @@ class CertTableView(QTableWidget):
 		return ', '.join(usages)
 
 class CertUploaderMainWindow(QMainWindow):
-	PRODUCT_NAME      = 'CertUploader'
-	PRODUCT_VERSION   = '1.2.2'
-	PRODUCT_WEBSITE   = 'https://github.com/schorschii/certuploader'
+	PRODUCT_NAME      = __title__
+	PRODUCT_VERSION   = __version__
+	PRODUCT_WEBSITE   = __website__
 	PRODUCT_ICON      = 'certuploader.png'
 	PRODUCT_ICON_PATH = '/usr/share/pixmaps'
 
@@ -789,7 +791,7 @@ def SaveCertCache(lstCerts):
 		return []
 
 def main():
-	parser = argparse.ArgumentParser(epilog='© 2021-2023 Georg Sieber - https://georg-sieber.de')
+	parser = argparse.ArgumentParser(epilog='© 2021-2024 Georg Sieber - https://georg-sieber.de')
 	parser.add_argument('-c', '--check-expiry', action='store_true', help='Do not start the main GUI but check the expiration dates of the cached certificates and show a warning if a certificate expires soon. Intended for use with autostart.')
 	args = parser.parse_args()
 

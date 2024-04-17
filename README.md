@@ -28,6 +28,26 @@ You can start CertUploader with the parameter `--check-expiry`. This will check 
 ### Tested Platforms
 The application is executable under Linux, Windows and macOS.
 
+## Installation
+```
+# install available python modules globally to avoid duplicate install in venv
+apt install python3-dnspython python3-pyqt5 python3-ldap3 python3-cryptography python3-pip python3-venv
+
+# using system site packages is important for the systemd journalctl module
+python3 -m venv venv --system-site-packages
+venv/bin/pip3 install .
+
+venv/bin/certuploader
+```
+
+### Compiling (on Windows and macOS)
+```
+python -m venv venv
+venv\Scripts\pip3 install pyinstaller .
+venv\Scripts\pyinstaller certuploader.windows-portable.spec
+venv\Scripts\pyinstaller certuploader.windows-setup.spec
+```
+
 ## Development
 ### I18n
 ```
@@ -38,11 +58,6 @@ pylupdate5 certuploader.py -ts lang/de.ts
 
 # 3. Compile translation files for usage
 lrelease lang/de.ts
-```
-
-### Compiling (on Windows and macOS)
-```
-pyinstaller certuploader.windows.spec
 ```
 
 ## Support

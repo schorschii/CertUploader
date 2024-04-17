@@ -2,3 +2,5 @@ PyQt5
 ldap3
 dnspython>=2.0
 cryptography>=2.5
+
+winkerberos; sys_platform == "win32"
