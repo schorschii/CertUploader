@@ -311,5 +311,33 @@
         <source>Cancel</source>
         <translation>Abbruch</translation>
     </message>
+    <message>
+        <source>Convert PEM cert with key to PKCS12</source>
+        <translation>PEM-Zertifikat mit Schlüssel nach PKCS12 konvertieren</translation>
+    </message>
+    <message>
+        <source>PEM Cert File</source>
+        <translation>PEM-Zertifikatsdatei</translation>
+    </message>
+    <message>
+        <source>PEM Key File</source>
+        <translation>PEM-Schlüsseldatei</translation>
+    </message>
+    <message>
+        <source>Output Path .p12/.pfx</source>
+        <translation>Ausgabepfad .p12/.pfx</translation>
+    </message>
+    <message>
+        <source>Choose a Password</source>
+        <translation>Passwort vergeben</translation>
+    </message>
+    <message>
+        <source>.p12/.pfx Generated Successfully</source>
+        <translation>.p12/.pfx erfolgreich generiert</translation>
+    </message>
+    <message>
+        <source>Conversion was successful.</source>
+        <translation>Konvertierung war erfolgreich</translation>
+    </message>
 </context>
 </TS>

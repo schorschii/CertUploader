@@ -6,8 +6,10 @@ from .__init__ import __title__, __version__, __website__
 from urllib.parse import unquote
 from pathlib import Path
 from os import path, makedirs, rename
-from datetime import datetime
 from dns import resolver, rdatatype
+from datetime import datetime
+import pytz
+import traceback
 import argparse
 import base64
 import getpass
@@ -66,7 +68,7 @@ class CertUploaderAboutWindow(QDialog):
 		labelCopyright = QLabel(self)
 		labelCopyright.setText(
 			'<br>'
-			'© 2021-2023 <a href=\'https://georg-sieber.de\'>Georg Sieber</a>'
+			'© 2021-2024 <a href=\'https://georg-sieber.de\'>Georg Sieber</a>'
 			'<br>'
 			'<br>'
 			'GNU General Public License v3.0'
@@ -93,7 +95,125 @@ class CertUploaderAboutWindow(QDialog):
 		self.layout.addWidget(self.buttonBox)
 
 		self.setLayout(self.layout)
-		self.setWindowTitle('About')
+		self.setWindowTitle(QApplication.translate('CertUploader', 'About'))
+
+class ConvertPemToPkcs12Window(QDialog):
+	def __init__(self, mainWindow, *args, **kwargs):
+		super(ConvertPemToPkcs12Window, self).__init__(*args, **kwargs)
+
+		# window layout
+		layout = QGridLayout()
+
+		lblCertFile = QLabel(QApplication.translate('CertUploader', 'PEM Cert File'))
+		layout.addWidget(lblCertFile, 0, 0)
+		self.txtPemCertFile = QLineEdit()
+		self.txtPemCertFile.setPlaceholderText(QApplication.translate('CertUploader', 'no path selected'))
+		self.txtPemCertFile.setEnabled(False)
+		layout.addWidget(self.txtPemCertFile, 0, 1)
+		btnChoosePrivateKeyFile = QPushButton('...')
+		btnChoosePrivateKeyFile.clicked.connect(self.OnClickChoosePemCertFile)
+		layout.addWidget(btnChoosePrivateKeyFile, 0, 2)
+
+		lblKeyFile = QLabel(QApplication.translate('CertUploader', 'PEM Key File'))
+		layout.addWidget(lblKeyFile, 1, 0)
+		self.txtPemKeyFile = QLineEdit()
+		self.txtPemKeyFile.setPlaceholderText(QApplication.translate('CertUploader', 'no path selected'))
+		self.txtPemKeyFile.setEnabled(False)
+		layout.addWidget(self.txtPemKeyFile, 1, 1)
+		btnChooseCsrFile = QPushButton('...')
+		btnChooseCsrFile.clicked.connect(self.OnClickChoosePemKeyFile)
+		layout.addWidget(btnChooseCsrFile, 1, 2)
+
+		lblCommonName = QLabel(QApplication.translate('CertUploader', 'Common Name'))
+		layout.addWidget(lblCommonName, 2, 0)
+		self.txtCommonName = QLineEdit()
+		layout.addWidget(self.txtCommonName, 2, 1)
+
+		lblP12Password = QLabel(QApplication.translate('CertUploader', 'Choose a Password'))
+		layout.addWidget(lblP12Password, 3, 0)
+		self.txtPassword = QLineEdit()
+		self.txtPassword.setEchoMode(QLineEdit.Password)
+		layout.addWidget(self.txtPassword, 3, 1)
+
+		lblP12File = QLabel(QApplication.translate('CertUploader', 'Output Path .p12/.pfx'))
+		layout.addWidget(lblP12File, 4, 0)
+		self.txtP12File = QLineEdit()
+		self.txtP12File.setPlaceholderText(QApplication.translate('CertUploader', 'no path selected'))
+		self.txtP12File.setEnabled(False)
+		layout.addWidget(self.txtP12File, 4, 1)
+		btnChooseCsrFile = QPushButton('...')
+		btnChooseCsrFile.clicked.connect(self.OnClickChooseP12File)
+		layout.addWidget(btnChooseCsrFile, 4, 2)
+
+		lblLegacyP12 = QLabel(QApplication.translate('CertUploader', 'Legacy .p12/.pfx'))
+		layout.addWidget(lblLegacyP12, 5, 0)
+		self.chkLegacyP12 = QCheckBox()
+		layout.addWidget(self.chkLegacyP12, 5, 1)
+
+		self.buttonBox = QDialogButtonBox(QDialogButtonBox.Save|QDialogButtonBox.Cancel)
+		self.buttonBox.button(QDialogButtonBox.Save).setText(QApplication.translate('CertUploader', 'Save'))
+		self.buttonBox.button(QDialogButtonBox.Cancel).setText(QApplication.translate('CertUploader', 'Cancel'))
+		self.buttonBox.accepted.connect(self.accept)
+		self.buttonBox.rejected.connect(self.reject)
+		layout.addWidget(self.buttonBox, 6, 0, 1, 3)
+		self.setLayout(layout)
+
+		# window properties
+		self.setWindowTitle(QApplication.translate('CertUploader', 'Convert PEM cert with key to PKCS12'))
+
+	def OnClickChoosePemCertFile(self, e):
+		fileName, _ = QFileDialog.getOpenFileName(self, QApplication.translate('CertUploader', 'PEM Cert File'), None, 'PEM encoded cert (*.crt *.cer *.pem);;')
+		if fileName: self.txtPemCertFile.setText(fileName)
+
+	def OnClickChoosePemKeyFile(self, e):
+		fileName, _ = QFileDialog.getOpenFileName(self, QApplication.translate('CertUploader', 'PEM Key File'), None, 'PEM encoded key (*.key *.pem);;')
+		if fileName: self.txtPemKeyFile.setText(fileName)
+
+	def OnClickChooseP12File(self, e):
+		fileName, _ = QFileDialog.getSaveFileName(self, QApplication.translate('CertUploader', 'PEM Key File'), 'converted.p12', 'PKCS12 (*.p12 *.pfx);;')
+		if fileName: self.txtP12File.setText(fileName)
+
+	def accept(self):
+		try:
+			with open(self.txtPemCertFile.text(), 'rb') as f:
+				certificate = x509.load_pem_x509_certificate(f.read())
+			with open(self.txtPemKeyFile.text(), 'rb') as f:
+				privateKey = serialization.load_pem_private_key(f.read(), None)
+
+			if(self.chkLegacyP12.isChecked()):
+				encryption = (
+					serialization.PrivateFormat.PKCS12.encryption_builder().
+					kdf_rounds(50000).
+					key_cert_algorithm(pkcs12.PBES.PBESv1SHA1And3KeyTripleDESCBC).
+					hmac_hash(hashes.SHA1()).build(self.txtPassword.text().encode('utf-8'))
+				)
+			else:
+				encryption = serialization.BestAvailableEncryption(self.txtPassword.text().encode('utf-8'))
+			p12bytes = pkcs12.serialize_key_and_certificates(
+				self.txtCommonName.text().encode('utf-8'),
+				privateKey, certificate, None,
+				encryption
+			)
+
+			with open(self.txtP12File.text(), 'wb') as f:
+				f.write(p12bytes)
+
+			msg = QMessageBox()
+			msg.setIcon(QMessageBox.Information)
+			msg.setWindowTitle(QApplication.translate('CertUploader', '.p12/.pfx Generated Successfully'))
+			msg.setText(QApplication.translate('CertUploader', 'Conversion was successful.'))
+			msg.setStandardButtons(QMessageBox.Ok)
+			msg.exec_()
+			self.close()
+
+		except Exception as e:
+			msg = QMessageBox()
+			msg.setIcon(QMessageBox.Critical)
+			msg.setWindowTitle(QApplication.translate('CertUploader', 'Error'))
+			msg.setText(str(e))
+			msg.setDetailedText(traceback.format_exc())
+			msg.setStandardButtons(QMessageBox.Ok)
+			msg.exec_()
 
 class CertificateSigningRequestWindow(QDialog):
 	def __init__(self, mainWindow, *args, **kwargs):
@@ -213,7 +333,7 @@ class CertTableView(QTableWidget):
 				certIssuedFor = str(cert.subject.get_attributes_for_oid(x509.NameOID.COMMON_NAME)[0].value)
 				certIssuer = str(cert.issuer.get_attributes_for_oid(x509.NameOID.COMMON_NAME)[0].value)
 				certUsage = str(self.GetExtendedKeyUsages(cert))
-				certExpiry = str(cert.not_valid_after)
+				certExpiry = str(cert.not_valid_after_utc)
 				certSerial = '{:x}'.format(cert.serial_number).upper()
 			except Exception as e:
 				certIssuedFor = QApplication.translate('CertUploader', 'INVALID CERTIFICATE')
@@ -305,29 +425,33 @@ class CertUploaderMainWindow(QMainWindow):
 		fileMenu = mainMenu.addMenu(QApplication.translate('CertUploader', '&File'))
 
 		queryAction = QAction(QApplication.translate('CertUploader', '&Query Certificates'), self)
-		queryAction.setShortcut('F2')
+		queryAction.setShortcut('F5')
 		queryAction.triggered.connect(self.OnClickQuery)
 		fileMenu.addAction(queryAction)
 		queryAction2 = QAction(QApplication.translate('CertUploader', 'Query &Other User Certificates'), self)
-		queryAction2.setShortcut('F3')
+		queryAction2.setShortcut('F6')
 		queryAction2.triggered.connect(self.OnClickQueryOtherUser)
 		fileMenu.addAction(queryAction2)
 		fileMenu.addSeparator()
 		requestAction = QAction(QApplication.translate('CertUploader', 'Generate Certificate Signing &Request (CSR)'), self)
-		requestAction.setShortcut('F4')
+		requestAction.setShortcut('F2')
 		requestAction.triggered.connect(self.OnClickGenerateCsr)
 		fileMenu.addAction(requestAction)
+		convertAction = QAction(QApplication.translate('CertUploader', 'Convert PEM cert with key to PKCS12'), self)
+		convertAction.setShortcut('F3')
+		convertAction.triggered.connect(self.OnClickConvertPemToPkcs12)
+		fileMenu.addAction(convertAction)
 		fileMenu.addSeparator()
 		uploadAction = QAction(QApplication.translate('CertUploader', '&Upload'), self)
-		uploadAction.setShortcut('F5')
+		uploadAction.setShortcut('F9')
 		uploadAction.triggered.connect(self.OnClickUpload)
 		fileMenu.addAction(uploadAction)
 		saveAction = QAction(QApplication.translate('CertUploader', '&Save'), self)
-		saveAction.setShortcut('F6')
+		saveAction.setShortcut('F10')
 		saveAction.triggered.connect(self.OnClickSave)
 		fileMenu.addAction(saveAction)
 		deleteAction = QAction(QApplication.translate('CertUploader', '&Delete'), self)
-		deleteAction.setShortcut('F7')
+		deleteAction.setShortcut('F11')
 		deleteAction.triggered.connect(self.OnClickDelete)
 		fileMenu.addAction(deleteAction)
 		fileMenu.addSeparator()
@@ -422,6 +546,10 @@ class CertUploaderMainWindow(QMainWindow):
 
 	def OnClickGenerateCsr(self, e):
 		dialog = CertificateSigningRequestWindow(self)
+		dialog.exec_()
+
+	def OnClickConvertPemToPkcs12(self, e):
+		dialog = ConvertPemToPkcs12Window(self)
 		dialog.exec_()
 
 	def OnClickQueryOtherUser(self, e):
@@ -815,16 +943,16 @@ def main():
 		for binaryCert in LoadCertCache():
 			try:
 				cert = x509.load_der_x509_certificate(binaryCert, default_backend())
-				if (cert.not_valid_after - datetime.now()).days < settings['expiry-warn-days']:
+				if (cert.not_valid_after_utc - datetime.now(tz=pytz.UTC)).days < settings['expiry-warn-days']:
 					certIssuedFor = str(cert.subject.get_attributes_for_oid(x509.NameOID.COMMON_NAME)[0].value)
 					certIssuer = str(cert.issuer.get_attributes_for_oid(x509.NameOID.COMMON_NAME)[0].value)
-					print('Certificate from »'+certIssuer+'« for »'+certIssuedFor+'« will expire on '+str(cert.not_valid_after)+'!')
+					print('Certificate from »'+certIssuer+'« for »'+certIssuedFor+'« will expire on '+str(cert.not_valid_after_utc)+'!')
 					Notify.Notification.new(
 						CertUploaderMainWindow.PRODUCT_NAME,
 						QApplication.translate('CertUploader', 'Certificate from »%1« for »%2« will expire on %3!')
 							.replace('%1', certIssuer)
 							.replace('%2', certIssuedFor)
-							.replace('%3', str(cert.not_valid_after)),
+							.replace('%3', str(cert.not_valid_after_utc)),
 						'dialog-warning'
 					).show()
 			except Exception as e:
