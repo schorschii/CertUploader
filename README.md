@@ -25,7 +25,11 @@ Once you queried your certificates they will be cached in `~/.config/certuploade
 ### Certificate Expiration Check
 You can start CertUploader with the parameter `--check-expiry`. This will check the cached certificates and display a desktop notification if one of them expires soon (time range can be defined in the settings file). It is intended to place this script call in your autostart.
 
-### Tested Platforms
+## Additional Features
+- Certificate Signing Request (CSR) creation including key generation
+- PEM cert (.crt, .cer, .pem) and key (.key, .pem) file conversion into PKCS12 (.p12, .pfx)
+
+## Tested Platforms
 The application is executable under Linux, Windows and macOS.
 
 ## Installation
