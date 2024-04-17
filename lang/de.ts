@@ -219,6 +219,11 @@
         <translation>&amp;Informationen</translation>
     </message>
     <message>
+        <location/>
+        <source>About</source>
+        <translation>Informationen</translation>
+    </message>
+    <message>
         <location filename="../certuploader.py" line="452"/>
         <source>Domain</source>
         <translation>Domäne</translation>
@@ -312,8 +317,8 @@
         <translation>Abbruch</translation>
     </message>
     <message>
-        <source>Convert PEM cert with key to PKCS12</source>
-        <translation>PEM-Zertifikat mit Schlüssel nach PKCS12 konvertieren</translation>
+        <source>&amp;Convert PEM cert with key to PKCS12</source>
+        <translation>PEM-Zertifikat mit Schlüssel nach PKCS12 &amp;konvertieren</translation>
     </message>
     <message>
         <source>PEM Cert File</source>

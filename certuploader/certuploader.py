@@ -437,7 +437,7 @@ class CertUploaderMainWindow(QMainWindow):
 		requestAction.setShortcut('F2')
 		requestAction.triggered.connect(self.OnClickGenerateCsr)
 		fileMenu.addAction(requestAction)
-		convertAction = QAction(QApplication.translate('CertUploader', 'Convert PEM cert with key to PKCS12'), self)
+		convertAction = QAction(QApplication.translate('CertUploader', '&Convert PEM cert with key to PKCS12'), self)
 		convertAction.setShortcut('F3')
 		convertAction.triggered.connect(self.OnClickConvertPemToPkcs12)
 		fileMenu.addAction(convertAction)
