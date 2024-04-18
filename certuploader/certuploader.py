@@ -145,7 +145,7 @@ class ConvertPemToPkcs12Window(QDialog):
 		btnChooseCsrFile.clicked.connect(self.OnClickChooseP12File)
 		layout.addWidget(btnChooseCsrFile, 4, 2)
 
-		lblLegacyP12 = QLabel(QApplication.translate('CertUploader', 'Legacy .p12/.pfx'))
+		lblLegacyP12 = QLabel(QApplication.translate('CertUploader', 'Legacy PKCS12'))
 		layout.addWidget(lblLegacyP12, 5, 0)
 		self.chkLegacyP12 = QCheckBox()
 		layout.addWidget(self.chkLegacyP12, 5, 1)
