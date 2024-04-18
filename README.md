@@ -1,7 +1,7 @@
 <img align="right" style="width:180px" src="assets/certuploader.png">
 
 # CertUploader
-The CertUploader enables you to upload/publish your personal (email) certificate into your companies LDAP directory (e.g. Active Directory). Other employees need the public key from your certificate in order to send encrypted emails to you (using Outlook, Evolution or other SMIME compatible mail clients).
+The CertUploader enables you to upload/publish your personal (email) certificate into your company's LDAP directory (e.g. Active Directory). Other employees need the public key from your certificate in order to send encrypted emails to you (using Outlook, Evolution or other SMIME compatible mail clients).
 
 ![Screenshot](.github/screenshot.png)
 
