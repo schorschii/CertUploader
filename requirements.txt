@@ -3,5 +3,6 @@ ldap3
 dnspython>=2.0
 cryptography>=38.0
 pyopenssl>=24.0
+pytz
 
 winkerberos; sys_platform == "win32"
