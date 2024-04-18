@@ -433,15 +433,6 @@ class CertUploaderMainWindow(QMainWindow):
 		queryAction2.triggered.connect(self.OnClickQueryOtherUser)
 		fileMenu.addAction(queryAction2)
 		fileMenu.addSeparator()
-		requestAction = QAction(QApplication.translate('CertUploader', 'Generate Certificate Signing &Request (CSR)'), self)
-		requestAction.setShortcut('F2')
-		requestAction.triggered.connect(self.OnClickGenerateCsr)
-		fileMenu.addAction(requestAction)
-		convertAction = QAction(QApplication.translate('CertUploader', '&Convert PEM cert with key to PKCS12'), self)
-		convertAction.setShortcut('F3')
-		convertAction.triggered.connect(self.OnClickConvertPemToPkcs12)
-		fileMenu.addAction(convertAction)
-		fileMenu.addSeparator()
 		uploadAction = QAction(QApplication.translate('CertUploader', '&Upload'), self)
 		uploadAction.setShortcut('F9')
 		uploadAction.triggered.connect(self.OnClickUpload)
@@ -459,6 +450,18 @@ class CertUploaderMainWindow(QMainWindow):
 		quitAction.setShortcut('Ctrl+Q')
 		quitAction.triggered.connect(self.OnQuit)
 		fileMenu.addAction(quitAction)
+
+		# Tools Menu
+		toolsMenu = mainMenu.addMenu(QApplication.translate('CertUploader', '&Tools'))
+
+		requestAction = QAction(QApplication.translate('CertUploader', 'Generate Certificate Signing &Request (CSR)'), self)
+		requestAction.setShortcut('F2')
+		requestAction.triggered.connect(self.OnClickGenerateCsr)
+		toolsMenu.addAction(requestAction)
+		convertAction = QAction(QApplication.translate('CertUploader', '&Convert PEM cert with key to PKCS12'), self)
+		convertAction.setShortcut('F3')
+		convertAction.triggered.connect(self.OnClickConvertPemToPkcs12)
+		toolsMenu.addAction(convertAction)
 
 		# Help Menu
 		helpMenu = mainMenu.addMenu(QApplication.translate('CertUploader', '&Help'))
