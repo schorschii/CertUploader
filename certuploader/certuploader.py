@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from .__init__ import __title__, __version__, __website__
+from .__init__ import __title__, __version__, __website__, __author__, __copyright__
 
 from urllib.parse import unquote
 from pathlib import Path
@@ -60,7 +60,7 @@ class CertUploaderAboutWindow(QDialog):
 		self.layout = QVBoxLayout(self)
 
 		labelAppName = QLabel(self)
-		labelAppName.setText(self.parentWidget().PRODUCT_NAME + ' v' + self.parentWidget().PRODUCT_VERSION)
+		labelAppName.setText(__title__ + ' v' + __version__)
 		labelAppName.setStyleSheet('font-weight:bold')
 		labelAppName.setAlignment(Qt.AlignCenter)
 		self.layout.addWidget(labelAppName)
@@ -68,12 +68,12 @@ class CertUploaderAboutWindow(QDialog):
 		labelCopyright = QLabel(self)
 		labelCopyright.setText(
 			'<br>'
-			'© 2021-2024 <a href=\'https://georg-sieber.de\'>Georg Sieber</a>'
+			+__copyright__+' <a href=\'https://georg-sieber.de\'>'+__author__+'</a>'
 			'<br>'
 			'<br>'
 			'GNU General Public License v3.0'
 			'<br>'
-			'<a href=\''+self.parentWidget().PRODUCT_WEBSITE+'\'>'+self.parentWidget().PRODUCT_WEBSITE+'</a>'
+			'<a href=\''+__website__+'\'>'+__website__+'</a>'
 			'<br>'
 			'<br>'
 			+ QApplication.translate('CertUploader', 'If you like CertUploader please consider<br>making a donation to support further development.') +
@@ -87,7 +87,6 @@ class CertUploaderAboutWindow(QDialog):
 		labelDescription.setText(
 			QApplication.translate('CertUploader', 'The CertUploader enables you to upload/publish your personal (email) certificate into your companies LDAP directory (e.g. Active Directory). Other employees need the public key from your certificate in order to send encrypted emails to you (using Outlook, Evolution or other SMIME compatible mail clients).')
 		)
-		labelDescription.setStyleSheet('opacity:0.8')
 		labelDescription.setFixedWidth(450)
 		labelDescription.setWordWrap(True)
 		self.layout.addWidget(labelDescription)
@@ -375,9 +374,6 @@ class CertTableView(QTableWidget):
 		return ', '.join(usages)
 
 class CertUploaderMainWindow(QMainWindow):
-	PRODUCT_NAME      = __title__
-	PRODUCT_VERSION   = __version__
-	PRODUCT_WEBSITE   = __website__
 	PRODUCT_ICON      = 'certuploader.png'
 	PRODUCT_ICON_PATH = '/usr/share/pixmaps'
 
@@ -510,7 +506,7 @@ class CertUploaderMainWindow(QMainWindow):
 
 		# Window Settings
 		self.setMinimumSize(500, 360)
-		self.setWindowTitle(self.PRODUCT_NAME+ ' v' + self.PRODUCT_VERSION)
+		self.setWindowTitle(__title__)
 		self.statusBar.showMessage(QApplication.translate('CertUploader', 'Settings file:')+' '+cfgPath)
 
 		# Load Cache
@@ -940,7 +936,7 @@ def main():
 		import gi
 		gi.require_version('Notify', '0.7')
 		from gi.repository import Notify
-		Notify.init(CertUploaderMainWindow.PRODUCT_NAME)
+		Notify.init(__title__)
 
 		settings = LoadSettings()
 		for binaryCert in LoadCertCache():
@@ -951,7 +947,7 @@ def main():
 					certIssuer = str(cert.issuer.get_attributes_for_oid(x509.NameOID.COMMON_NAME)[0].value)
 					print('Certificate from »'+certIssuer+'« for »'+certIssuedFor+'« will expire on '+str(cert.not_valid_after_utc)+'!')
 					Notify.Notification.new(
-						CertUploaderMainWindow.PRODUCT_NAME,
+						__title__,
 						QApplication.translate('CertUploader', 'Certificate from »%1« for »%2« will expire on %3!')
 							.replace('%1', certIssuer)
 							.replace('%2', certIssuedFor)
