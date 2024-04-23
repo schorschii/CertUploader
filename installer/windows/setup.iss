@@ -6,6 +6,7 @@
 #define MyAppPublisher "Sieber Systems"
 #define MyAppURL "https://github.com/schorschii/certuploader"
 #define MyAppExeName "certuploader.exe"
+#define MyAppDir "C:\Program Files\"+MyAppName
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -18,7 +19,9 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName=C:\Program Files\{#MyAppName}
+UninstallDisplayName={#MyAppName}
+UninstallDisplayIcon="{#MyAppDir}\\{#MyAppExeName},0"
+DefaultDirName={#MyAppDir}
 DisableDirPage=yes
 DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
