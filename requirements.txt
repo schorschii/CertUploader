@@ -1,7 +1,7 @@
 PyQt5
 ldap3
 dnspython>=2.0
-cryptography>=38.0
+cryptography>=42.0
 pyopenssl>=24.0
 pytz
 
