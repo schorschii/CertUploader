@@ -329,8 +329,17 @@ class CertTableView(QTableWidget):
 		for binaryCert in self.tmpCerts:
 			try:
 				cert = x509.load_der_x509_certificate(binaryCert, default_backend())
-				certIssuedFor = str(cert.subject.get_attributes_for_oid(x509.NameOID.COMMON_NAME)[0].value)
-				certIssuer = str(cert.issuer.get_attributes_for_oid(x509.NameOID.COMMON_NAME)[0].value)
+				try:
+					certIssuedFor = str(cert.subject.get_attributes_for_oid(x509.NameOID.COMMON_NAME)[0].value)
+				except Exception as e:
+					try:
+						certIssuedFor = str(cert.subject.get_attributes_for_oid(x509.NameOID.EMAIL_ADDRESS)[0].value)
+					except Exception as e:
+						certIssuedFor = '?'
+				try:
+					certIssuer = str(cert.issuer.get_attributes_for_oid(x509.NameOID.COMMON_NAME)[0].value)
+				except Exception as e:
+					certIssuer = '?'
 				certUsage = str(self.GetExtendedKeyUsages(cert))
 				certExpiry = str(cert.not_valid_after_utc)
 				certSerial = '{:x}'.format(cert.serial_number).upper()
@@ -364,14 +373,14 @@ class CertTableView(QTableWidget):
 		self.resizeRowsToContents()
 
 	def GetExtendedKeyUsages(self, cert):
-		usages = []
+		usages = {}
 		try:
 			ext = cert.extensions.get_extension_for_class(x509.ExtendedKeyUsage)
 			for usage in ext.value:
-				usages.append( str(usage.dotted_string if usage._name == 'Unknown OID' else usage._name) )
+				usages[usage.dotted_string] = str(usage.dotted_string if usage._name == 'Unknown OID' else usage._name)
 		except x509.ExtensionNotFound:
 			return '-'
-		return ', '.join(usages)
+		return ', '.join(dict(sorted(usages.items())).values())
 
 class CertUploaderMainWindow(QMainWindow):
 	PRODUCT_ICON      = 'certuploader.png'
