@@ -37,7 +37,7 @@ The application is executable under Linux, Windows and macOS.
 # install available python modules globally to avoid duplicate install in venv
 apt install python3-dnspython python3-pyqt5 python3-ldap3 python3-cryptography python3-pip python3-venv
 
-# using system site packages is important for the systemd journalctl module
+# create a venv and install the app with its dependencies in it
 python3 -m venv venv --system-site-packages
 venv/bin/pip3 install .
 
