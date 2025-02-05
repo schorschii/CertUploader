@@ -887,7 +887,7 @@ def LoadSettings():
 			cfgJson = json.load(f)
 
 	return {
-		'server': cfgJson.get('server', ''),
+		'server': cfgJson.get('server', []),
 		'domain': cfgJson.get('domain', ''),
 		'username': cfgJson.get('username', ''),
 		'ldap-attribute-certificates': str(cfgJson.get('ldap-attribute-certificates', CertUploaderMainWindow.cfgLdapAttributeCertificates)),
